@@ -1,4 +1,19 @@
-	/**
+package fa.nfa;
+
+import fa.dfa.DFA;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+/**
+ * Implementation of DFA class to be used
+ * in p1p2
+ * @author elenasherman
+ *
+ */
+public class NFA implements NFAInterface{
+    
+    /**
 	 * 
 	 * @return equivalent DFA
 	 */
@@ -24,5 +39,7 @@
 	 */
 	
 	public Set<NFAState> eClosure(NFAState s) {
-        
+
     }
+
+}
