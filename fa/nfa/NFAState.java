@@ -2,7 +2,7 @@ package fa.nfa;
 
 import fa.State;
 
-public class NFAState implements State{
+public class NFAState extends State{
     /**
 	 * The state label.
 	 * It should be a unique name.

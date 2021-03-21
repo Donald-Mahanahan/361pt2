@@ -3,6 +3,7 @@ package fa.nfa;
 import fa.State;
 import fa.dfa.DFA;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -12,23 +13,48 @@ import java.util.Set;
  * @author elenasherman
  *
  */
+
+
+
 public class NFA implements NFAInterface{
+	// store start
+	private NFAState startState;
+	// store final
+	private LinkedHashSet<NFAState> finalStates;
+	// store alpha
+	private LinkedHashSet<Character> alphabet;
+	// store states
+	private LinkedHashSet<NFAState> states;
+	// store transitions
+	private HashMap<Character, HashMap<Character, NFAState>> transitions;
+	// store currentState
+	private NFAState currentState;
+
+	public NFA() {
+		// Instanitate all private variables at runtime
+		transitions = new HashMap<Character, HashMap<Character, NFAState>>();
+		finalStates = new LinkedHashSet<NFAState>();
+		alphabet = new LinkedHashSet<Character>();
+		states = new LinkedHashSet<NFAState>();
+		currentState = startState;
+
+	}
 
 	@Override
 	public void addStartState(String name) {
-		// TODO Auto-generated method stub
+		startState = new NFAState(name);
 		
 	}
 
 	@Override
 	public void addState(String name) {
-		// TODO Auto-generated method stub
+		states.add(new NFAState(name));
 		
 	}
 
 	@Override
 	public void addFinalState(String name) {
-		// TODO Auto-generated method stub
+		finalState.add(new NFAState(name));
 		
 	}
 
@@ -40,26 +66,25 @@ public class NFA implements NFAInterface{
 
 	@Override
 	public Set<? extends State> getStates() {
-		// TODO Auto-generated method stub
-		return null;
+		return states;
 	}
 
 	@Override
 	public Set<? extends State> getFinalStates() {
 		// TODO Auto-generated method stub
-		return null;
+		return finalStates;
 	}
 
 	@Override
 	public State getStartState() {
 		// TODO Auto-generated method stub
-		return null;
+		return (State) startState;
 	}
 
 	@Override
 	public Set<Character> getABC() {
 		// TODO Auto-generated method stub
-		return null;
+		return alphabet;
 	}
 
 	@Override
