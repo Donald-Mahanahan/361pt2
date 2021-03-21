@@ -20,23 +20,16 @@ public class NFA implements NFAInterface{
 	// store start
 	private NFAState startState;
 	// store final
-	private LinkedHashSet<NFAState> finalStates;
 	// store alpha
 	private LinkedHashSet<Character> alphabet;
 	// store states
 	private LinkedHashSet<NFAState> states;
-	// store transitions
-	private HashMap<Character, HashMap<Character, NFAState>> transitions;
-	// store currentState
-	private NFAState currentState;
 
 	public NFA() {
 		// Instanitate all private variables at runtime
-		transitions = new HashMap<Character, HashMap<Character, NFAState>>();
-		finalStates = new LinkedHashSet<NFAState>();
+
 		alphabet = new LinkedHashSet<Character>();
 		states = new LinkedHashSet<NFAState>();
-		currentState = startState;
 
 	}
 
