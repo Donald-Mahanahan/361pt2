@@ -1,4 +1,6 @@
+package fa.nfa;
 
+import fa.State;
 
 public class NFAState implements State{
     /**
@@ -7,7 +9,7 @@ public class NFAState implements State{
 	 * @author elenasherman
 	 */
 	protected String name() {
-        
+
     }
 	
 	/**
