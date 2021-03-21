@@ -1,5 +1,6 @@
 package fa.nfa;
 
+import fa.State;
 import fa.dfa.DFA;
 
 import java.util.LinkedHashSet;
@@ -12,34 +13,73 @@ import java.util.Set;
  *
  */
 public class NFA implements NFAInterface{
-    
-    /**
-	 * 
-	 * @return equivalent DFA
-	 */
-	public abstract DFA getDFA() {
 
-    }
-	
-	/**
-	 * Return delta entries
-	 * @param from - the source state
-	 * @param onSymb - the label of the transition
-	 * @return a set of sink states
-	 */
+	@Override
+	public void addStartState(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addState(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addFinalState(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addTransition(String fromState, char onSymb, String toState) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Set<? extends State> getStates() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<? extends State> getFinalStates() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public State getStartState() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<Character> getABC() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DFA getDFA() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public Set<NFAState> getToState(NFAState from, char onSymb) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    }
-	
-	/**
-	 * Traverses all epsilon transitions and determine
-	 * what states can be reached from s through e
-	 * @param s
-	 * @return set of states that can be reached from s on epsilon trans.
-	 */
-	
+	@Override
 	public Set<NFAState> eClosure(NFAState s) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+    
 
-    }
 
 }
