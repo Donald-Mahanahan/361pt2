@@ -1,21 +1,24 @@
 package fa.nfa;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import fa.State;
+import fa.dfa.DFAState;
 
 public class NFAState extends State{
   private boolean isFinal;
-  private HashMap<Character, NFAState> transitions;
+  private HashMap<Character, LinkedHashSet<NFAState>> transitions;
 
   public NFAState(String name){
     super.name = name;
     isFinal = false;
-    transitions = new HashMap<Character, NFAState>();
+    transitions = new HashMap<Character, LinkedHashSet<NFAState>>();
   }
 
   public void addTransition(char onSymb, NFAState to){
-    transitions.put(onSymb, to);
+    
   }
   public void setFinal(){
       this.isFinal = true;
@@ -23,8 +26,8 @@ public class NFAState extends State{
   public boolean isFinal(){
       return isFinal;
   }
-  public NFAState getTo(char symb){
-      NFAState returnState = transitions.get(symb);
+  public Set<NFAState> getTo(char symb){
+      Set<NFAState> returnState = transitions.get(symb);
       if(returnState == null){
           System.err.println("ERROR: no transition exists for symbol " + symb + "on state " + super.getName());
           System.exit(2);

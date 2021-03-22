@@ -14,12 +14,9 @@ import java.util.Set;
  *
  */
 
-
-
 public class NFA implements NFAInterface{
 	// store start
 	private NFAState startState;
-	// store final
 	// store alpha
 	private LinkedHashSet<Character> alphabet;
 	// store states
@@ -38,22 +35,57 @@ public class NFA implements NFAInterface{
 		startState = new NFAState(name);
 		
 	}
+	private NFAState stateExist(String name){
+		for (NFAState s: states) {
+			if(name.equals(s.getName())){
+				return s;
+				
+			}
+			
+		}
+		return null;
+		
+	}
 
 	@Override
 	public void addState(String name) {
+		if(stateExist(name) != null){
+			System.err.println("A state already exists for " + name);
+			System.exit(2);
+		}
 		states.add(new NFAState(name));
 		
 	}
 
 	@Override
 	public void addFinalState(String name) {
-		finalState.add(new NFAState(name));
+		if(stateExist(name) != null){
+			System.err.println("A state already exists for " + name);
+			System.exit(2);
+		}
+		NFAState finalState = new NFAState(name);
+		finalState.setFinal();
+		states.add(finalState);
 		
 	}
 
 	@Override
 	public void addTransition(String fromState, char onSymb, String toState) {
-		// TODO Auto-generated method stub
+		NFAState from = stateExist(fromState);
+		NFAState to = stateExist(toState);
+		if(from == null){
+			System.err.println("No state exists for " + fromState);
+			System.exit(2);
+		}
+		else if(to == null){
+			System.err.println("No state exists for " + toState);
+			System.exit(2);
+		}
+
+		from.addTransition(onSymb, to);
+
+
+		
 		
 	}
 
@@ -64,8 +96,14 @@ public class NFA implements NFAInterface{
 
 	@Override
 	public Set<? extends State> getFinalStates() {
-		// TODO Auto-generated method stub
+		Set<NFAState> finalStates = new LinkedHashSet<NFAState>();
+		for (NFAState state : states) {
+			if(state.isFinal()){
+				finalStates.add(state);
+			}
+		}
 		return finalStates;
+		
 	}
 
 	@Override
@@ -88,8 +126,16 @@ public class NFA implements NFAInterface{
 
 	@Override
 	public Set<NFAState> getToState(NFAState from, char onSymb) {
-		// TODO Auto-generated method stub
-		return null;
+		NFAState start = new NFAState(null);
+
+		for(NFAState l : states){
+			if(from.getName().equals(l.getName())){
+				start = l;
+				break;
+			}
+		return start.getTo(onSymb);
+		
+		}
 	}
 
 	@Override
