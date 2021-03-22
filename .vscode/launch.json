@@ -16,7 +16,11 @@
             "name": "Launch NFADriver",
             "request": "launch",
             "mainClass": "fa.nfa.NFADriver",
+<<<<<<< HEAD
             "projectName": "361pt2_5bbd85a4"
+=======
+            "projectName": "361pt2_fe71ecea"
+>>>>>>> NFA implemented
         }
     ]
 }

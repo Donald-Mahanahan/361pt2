@@ -33,6 +33,7 @@ public class NFA implements NFAInterface{
 	@Override
 	public void addStartState(String name) {
 		startState = new NFAState(name);
+		states.add(startState);
 		
 	}
 	private NFAState stateExist(String name){
@@ -133,9 +134,8 @@ public class NFA implements NFAInterface{
 				start = l;
 				break;
 			}
-		return start.getTo(onSymb);
-		
 		}
+		return start.getTo(onSymb);
 	}
 
 	@Override
