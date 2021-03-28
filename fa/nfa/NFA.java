@@ -125,6 +125,9 @@ public class NFA implements NFAInterface{
 	public DFA getDFA() {
 		Set<NFAState> eClosure = new LinkedHashSet<NFAState>();
 	    eClosure = this.eClosure(startState);
+		
+		System.out.println("test");
+		
 		return null;
 	}
 
