@@ -8,7 +8,7 @@
             "type": "java",
             "name": "Launch Current File",
             "request": "launch",
-            "args": ["tests/p2tc0.txt"],
+            "args": ["tests/p2tc4.txt"],
             "mainClass": "${file}"
         },
         {

@@ -36,12 +36,9 @@ public class NFAState extends State{
       return isFinal;
   }
   public Set<NFAState> getTo(char symb){
+      
       LinkedHashSet<NFAState> returnState = transitions.get(symb);
-      if(returnState == null){
-          System.err.println("ERROR: no transition exists for symbol " + symb + "on state " + super.getName());
-          System.exit(2);
-      }
-        return returnState;
+      return returnState;
 
       
   }

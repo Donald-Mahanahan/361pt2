@@ -5,7 +5,9 @@ import fa.dfa.DFA;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.Set;
+import java.util.Deque;
 
 /**
  * Implementation of DFA class to be used
@@ -121,7 +123,8 @@ public class NFA implements NFAInterface{
 
 	@Override
 	public DFA getDFA() {
-		// TODO Auto-generated method stub
+		Set<NFAState> eClosure = new LinkedHashSet<NFAState>();
+	    eClosure = this.eClosure(startState);
 		return null;
 	}
 
@@ -140,9 +143,27 @@ public class NFA implements NFAInterface{
 
 	@Override
 	public Set<NFAState> eClosure(NFAState s) {
-		// TODO Auto-generated method stub
-		return null;
+		Set<NFAState> visited = new LinkedHashSet<NFAState>();
+		return DFS(s, visited); 
+		
 	}
+	public Set<NFAState> DFS(NFAState s, Set<NFAState> visitedStates){
+		Set<NFAState> transitions = new LinkedHashSet<NFAState>();
+		transitions.add(s);
+
+		if(s.getTo('e') != null && !visitedStates.contains(s)){
+			Set<NFAState> temp = new LinkedHashSet<NFAState>();
+			temp.addAll(s.getTo('e'));
+			visitedStates.add(s);
+			for(NFAState transition : temp){
+				transitions.addAll(DFS(transition, visitedStates));
+			}
+		}
+		return transitions;
+		
+		
+	}
+	
     
 
 
