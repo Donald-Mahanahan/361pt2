@@ -4,8 +4,10 @@ import fa.State;
 import fa.dfa.DFA;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Deque;
 
@@ -35,7 +37,12 @@ public class NFA implements NFAInterface{
 	@Override
 	public void addStartState(String name) {
 		startState = new NFAState(name);
-		states.add(startState);
+		
+		if (startState != null) {
+
+			addState(startState);
+		}
+	
 		
 	}
 	private NFAState stateExist(String name){
@@ -52,13 +59,15 @@ public class NFA implements NFAInterface{
 
 	@Override
 	public void addState(String name) {
-		if(stateExist(name) != null){
-			System.err.println("A state already exists for " + name);
-			System.exit(2);
-		}
-		states.add(new NFAState(name));
-		
+		if(name != null){
+			NFAState newState = new NFAState(name);
+            addState(newState);
+		}	
 	}
+
+	public void addState(NFAState name) {
+        states.add(name);
+    }
 
 	@Override
 	public void addFinalState(String name) {
@@ -122,13 +131,40 @@ public class NFA implements NFAInterface{
 	}
 
 	@Override
-	public DFA getDFA() {
-		Set<NFAState> eClosure = new LinkedHashSet<NFAState>();
-	    eClosure = this.eClosure(startState);
+	public DFA getDFA() {		
+		DFA dfa = new DFA();
+
+		//instantiate queue for bfs
+		Queue<Set<NFAState>> queue = new LinkedList<Set<NFAState>>();
+
+		HashSet<NFAState> NFAstate = new HashSet<NFAState>();
+
+		NFAstate.add(this.startState);
+
+		dfa.addStartState(NFAstate.toString());
 		
-		System.out.println("test");
+		//iterate through queue
+		while (!queue.isEmpty()) {
+			
+			// You should track inside getDFA() method whether a DFA state with the label(name) corresponding to the string 
+			//representation of the NFA states has been created or not. 
+			//Q of a DFA can be printed either as {[a] [a, b]}or as{[b, a] [a]}
+
+			//first item
+			Set<NFAState> current = queue.poll();
+
+			for(Character a : getABC() ) {
+				Set<NFAState> characterSet = new HashSet<NFAState>();
+				for (NFAState b : current) {
+					for (NFAState t : b.getTransition().get(a)) {
+							characterSet.addAll(eClosure(t));
+					}	
+				}
+			}
+
+		}
 		
-		return null;
+		return dfa;
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package fa.nfa;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -26,9 +27,14 @@ public class NFAState extends State{
         }
         current.add(to);
         transitions.put(onSymb, current);
-        
-       
+   
   }
+
+  public HashMap<Character,LinkedHashSet<NFAState>> getTransition()
+	{
+		return transitions;
+	}
+
   public void setFinal(){
       this.isFinal = true;
   }
