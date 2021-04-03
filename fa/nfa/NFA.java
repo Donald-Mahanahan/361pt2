@@ -137,10 +137,16 @@ public class NFA implements NFAInterface{
 		//instantiate queue for bfs
 		Queue<Set<NFAState>> queue = new LinkedList<Set<NFAState>>();
 
+		//copy of queue
+		Set<Set<NFAState>> copyQueue = new HashSet<Set<NFAState>>();
+
+		//set of nfa states
 		HashSet<NFAState> NFAstate = new HashSet<NFAState>();
 
+		//adding inital startstate
 		NFAstate.add(this.startState);
 
+		//added the string representation to dfa for output (which is I think how we need to approach getting the correct output)
 		dfa.addStartState(NFAstate.toString());
 		
 		//iterate through queue
@@ -152,6 +158,8 @@ public class NFA implements NFAInterface{
 
 			//first item
 			Set<NFAState> current = queue.poll();
+			copyQueue.add(current);
+
 
 			for(Character a : getABC() ) {
 				Set<NFAState> characterSet = new HashSet<NFAState>();
@@ -161,11 +169,9 @@ public class NFA implements NFAInterface{
 					}	
 				}
 			}
-
 		}
-		
 		return dfa;
-	}
+		}
 
 	@Override
 	public Set<NFAState> getToState(NFAState from, char onSymb) {
