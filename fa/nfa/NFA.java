@@ -147,6 +147,7 @@ public class NFA implements NFAInterface {
 
 		// adding inital startstate
 		queue.add(this.startState);
+		dfa.addState(this.startState.getName());
 
 		// added the string representation to dfa for output (which is I think how we
 		// need to approach getting the correct output)
@@ -160,33 +161,45 @@ public class NFA implements NFAInterface {
 			// Q of a DFA can be printed either as {[a] [a, b]}or as{[b, a] [a]}
 
 			// first item
-			NFAState current = queue.poll();
-			visited.add(current);
-			for (Character a : this.alphabet) {
-				
-				Set<NFAState> transitionSet = new LinkedHashSet<NFAState>();
-				transitionSet = this.eClosure(current);
-				for (NFAState transition : transitionSet) {
-					Set<NFAState> dfaTransitions = transition.getTo(a);
+				NFAState current = queue.poll();
+				visited.add(current);
+				for (Character a : this.alphabet) {
 
-					for (NFAState r : dfaTransitions) {
-						dfa.addState(r.getName());
-						dfa.addTransition(transition.getName(), a, r.getName());
+					Set<NFAState> transitionSet = new LinkedHashSet<NFAState>();
+					transitionSet = this.eClosure(current);
+					for (NFAState transition : transitionSet) {
 
-						if (!visited.contains(r)) {
-							queue.add(r);
+						Set<NFAState> dfaTransitions = transition.getTo(a);
+						if(dfaTransitions != null){
+							for(NFAState dfaTransition: dfaTransitions){
+								if (!visited.contains(dfaTransition)) {
+									queue.add(transition);
+									dfa.addState(dfaTransition.getName());
+								}
+								dfa.addTransition(dfaTransition.getName(), a, transition.getName());
+							}
 						}
-
+						
+						
+		
+						
+						
+						
+						
+	
 					}
-
+	
 				}
+	
 
-			}
 			
-
+			
 		}
-		return dfa;
+			return dfa;
+
 	}
+		
+	
 
 	@Override
 	public Set<NFAState> getToState(NFAState from, char onSymb) {
