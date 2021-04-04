@@ -136,7 +136,7 @@ public class NFA implements NFAInterface {
 		DFA dfa = new DFA();
 
 		// instantiate queue for bfs
-		Queue<NFAState> queue = new LinkedList<NFAState>();
+		Queue<Set<NFAState>> queue = new LinkedList<Set<NFAState>>();
 
 		// copy of queue
 		Set<Set<NFAState>> copyQueue = new HashSet<Set<NFAState>>();
@@ -146,8 +146,8 @@ public class NFA implements NFAInterface {
 		HashSet<NFAState> visited = new HashSet<NFAState>();
 
 		// adding inital startstate
-		queue.add(this.startState);
-		dfa.addState(this.startState.getName());
+		queue.add(eClosure(startState));
+		// dfa.addState(this.startState.getName());
 
 		// added the string representation to dfa for output (which is I think how we
 		// need to approach getting the correct output)
@@ -155,45 +155,64 @@ public class NFA implements NFAInterface {
 		// iterate through queue
 		while (!queue.isEmpty()) {
 
-			// You should track inside getDFA() method whether a DFA state with the
-			// label(name) corresponding to the string
-			// representation of the NFA states has been created or not.
-			// Q of a DFA can be printed either as {[a] [a, b]}or as{[b, a] [a]}
+				Set<NFAState> current = queue.poll();
+				// visited.add(current);
 
-			// first item
-				NFAState current = queue.poll();
-				visited.add(current);
+				if (dfa.getStartState() == null) {
+					dfa.addStartState(current.toString());
+				}
+
 				for (Character a : this.alphabet) {
 
-					Set<NFAState> transitionSet = new LinkedHashSet<NFAState>();
-					transitionSet = this.eClosure(current);
-					for (NFAState transition : transitionSet) {
-
-						Set<NFAState> dfaTransitions = transition.getTo(a);
-						if(dfaTransitions != null){
-							for(NFAState dfaTransition: dfaTransitions){
-								if (!visited.contains(dfaTransition)) {
-									queue.add(transition);
-									dfa.addState(dfaTransition.getName());
+					Set<NFAState> transitionSet = new HashSet<NFAState>();
+					// transitionSet = this.eClosure(current);
+					for (NFAState transition : current) {
+						// Set<NFAState> dfaTransitions = transition.getTo(a);
+						// if(dfaTransitions != null){
+							if (transition.getTransition().get(a) != null) {
+								for(NFAState dfaTransition: transition.getTransition().get(a)){
+									if (!visited.contains(dfaTransition)) {
+										transitionSet.addAll(eClosure(dfaTransition));
+									}
 								}
-								dfa.addTransition(dfaTransition.getName(), a, transition.getName());
+							}
+					}
+
+					boolean dfaHasState = false;
+
+					for (State s : dfa.getStates()) {
+						if (s.getName().equals(transitionSet.toString())) {
+							dfaHasState = true;
+						}
+					}
+
+					if (transitionSet.toString() == "[]") {
+						if (!dfaHasState) {
+							dfa.addState("[]");
+							queue.add(transitionSet);
+						}
+						dfa.addTransition(current.toString(), a, "[]");
+					} else if (!dfaHasState) {
+						boolean isFinal = false;
+						for (NFAState ns : transitionSet) {
+							if (ns.isFinal()) {
+								isFinal = true;
 							}
 						}
-						
-						
-		
-						
-						
-						
-						
-	
+						if (isFinal) {
+							queue.add(transitionSet);
+							dfa.addFinalState(transitionSet.toString());
+						} else {
+							queue.add(transitionSet);
+							dfa.addState(transitionSet.toString());
+						}
 					}
-	
-				}
-	
+					dfa.addTransition(current.toString(), a, transitionSet.toString());
 
-			
-			
+
+
+				}
+
 		}
 			return dfa;
 
