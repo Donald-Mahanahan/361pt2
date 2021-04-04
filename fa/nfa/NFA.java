@@ -147,7 +147,7 @@ public class NFA implements NFAInterface {
 
 		// adding inital startstate
 		queue.add(this.startState);
-		dfa.addState(this.startState.getName());
+		dfa.addStartState(this.startState.getName());
 
 		// added the string representation to dfa for output (which is I think how we
 		// need to approach getting the correct output)
@@ -166,18 +166,26 @@ public class NFA implements NFAInterface {
 				for (Character a : this.alphabet) {
 
 					Set<NFAState> transitionSet = new LinkedHashSet<NFAState>();
-					transitionSet = this.eClosure(current);
+					transitionSet.addAll(this.eClosure(current)); 
 					for (NFAState transition : transitionSet) {
 
 						Set<NFAState> dfaTransitions = transition.getTo(a);
 						if(dfaTransitions != null){
 							for(NFAState dfaTransition: dfaTransitions){
 								if (!visited.contains(dfaTransition)) {
-									queue.add(transition);
+									queue.add(dfaTransition);
 									dfa.addState(dfaTransition.getName());
+									
+									
 								}
-								dfa.addTransition(dfaTransition.getName(), a, transition.getName());
+								dfa.addTransition( transition.getName(), a ,dfaTransition.getName());
+								
 							}
+							
+						}
+					
+
+							
 						}
 						
 						
