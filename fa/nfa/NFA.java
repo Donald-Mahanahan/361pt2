@@ -167,14 +167,13 @@ public class NFA implements NFAInterface {
 				transitionSet = this.eClosure(current);
 				for (NFAState transition : transitionSet) {
 					Set<NFAState> dfaTransitions = transition.getTo(a);
-					DFAState s = new DFAState(transition.getName());
 
 					for (NFAState r : dfaTransitions) {
 						dfa.addState(r.getName());
-						dfa.addTransition(s.getName(), a, r.getName());
+						dfa.addTransition(transition.getName(), a, r.getName());
 
 						if (!visited.contains(transition)) {
-							queue.add(transition);
+							queue.add(r);
 						}
 
 					}
