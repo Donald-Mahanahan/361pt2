@@ -160,9 +160,10 @@ public class NFA implements NFAInterface {
 			// Q of a DFA can be printed either as {[a] [a, b]}or as{[b, a] [a]}
 
 			// first item
-			NFAState current = null;
+			NFAState current = queue.poll();
+			visited.add(current);
 			for (Character a : this.alphabet) {
-				current = queue.poll();
+				
 				Set<NFAState> transitionSet = new LinkedHashSet<NFAState>();
 				transitionSet = this.eClosure(current);
 				for (NFAState transition : transitionSet) {
@@ -172,7 +173,7 @@ public class NFA implements NFAInterface {
 						dfa.addState(r.getName());
 						dfa.addTransition(transition.getName(), a, r.getName());
 
-						if (!visited.contains(transition)) {
+						if (!visited.contains(r)) {
 							queue.add(r);
 						}
 
@@ -181,7 +182,7 @@ public class NFA implements NFAInterface {
 				}
 
 			}
-			visited.add(current);
+			
 
 		}
 		return dfa;
