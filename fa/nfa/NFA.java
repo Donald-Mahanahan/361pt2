@@ -153,13 +153,14 @@ public class NFA implements NFAInterface {
 				}
 				for (Character a : this.alphabet) {
 
-					Set<NFAState> transitionSet = new LinkedHashSet<NFAState>();
+					Set<NFAState> transitionSet = new HashSet<NFAState>();
 					for (NFAState transition : current) {
 
 						Set<NFAState> dfaTransitions = transition.getTo(a);
 						
 						if (dfaTransitions != null) {
 							for(NFAState dfaTransition: dfaTransitions){
+								
 								if (!visited.contains(dfaTransition)) {
 									transitionSet.addAll(eClosure(dfaTransition));
 								}
@@ -170,62 +171,28 @@ public class NFA implements NFAInterface {
 					boolean hasState = false;
 					boolean finalState = false;
 
-					for (NFAState nfaState : transitionSet) {
-						for (DFAState dfaState : dfa.getStates()) {
-							if (nfaState.toString().equals(dfaState.getName())) {
+					for (DFAState dfaState : dfa.getStates()) {
+							if (transitionSet.toString().equals(dfaState.getName())) {
 								hasState = true;		
 							}
-						}
-						if (nfaState.isFinal()) {
-							finalState = true;
-						}
 					}
 
+						if (!hasState) {
+							for (NFAState nfaState : transitionSet) {
+							if (nfaState.isFinal()) {
+								finalState = true;
+								}
+							}
+							if (finalState) {
+								queue.add(transitionSet);
+								dfa.addFinalState(transitionSet.toString());
+							} else {
+								queue.add(transitionSet);
+								dfa.addState(transitionSet.toString());
+							}
+						}
 
-
-		
-
-				
-
-
-
-				
-
-					
-
-
-					// boolean dfaHasState = false;
-
-					// for (State s : dfa.getStates()) {
-					// 	if (s.getName().equals(transitionSet.toString())) {
-					// 		dfaHasState = true;
-					// 	}
-					// }
-
-					// if (transitionSet.toString() == "[]") {
-					// 	if (!dfaHasState) {
-					// 		dfa.addState("[]");
-					// 		queue.add(transitionSet);
-					// 	}
-					// 	dfa.addTransition(current.toString(), a, "[]");
-					
-					// } else 
-					// if (!dfaHasState) {
-					// 	boolean finalState = false;
-					// 	for (NFAState ns : transitionSet) {
-					// 		if (ns.isFinal()) {
-					// 			finalState = true;
-					// 		}
-					// 	}
-					// 	if (finalState) {
-					// 		queue.add(transitionSet);
-					// 		dfa.addFinalState(transitionSet.toString());
-					// 	} else {
-					// 		queue.add(transitionSet);
-					// 		dfa.addState(transitionSet.toString());
-					// 	}
-					// }
-						dfa.addTransition(current.toString(), a, transitionSet.toString());
+					dfa.addTransition(current.toString(), a, transitionSet.toString());
 					}	
 				}
 			return dfa;
