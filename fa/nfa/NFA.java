@@ -13,9 +13,9 @@ import java.util.Set;
 import java.util.Deque;
 
 /**
- * Implementation of DFA class to be used in p1p2
+ * Implementation of NFA class
  * 
- * @author elenasherman
+ * @author Aidan Leuck, Zachary Sherwood
  *
  */
 
@@ -46,6 +46,11 @@ public class NFA implements NFAInterface {
 
 	}
 
+	/**
+	 * Checks if a state exists in the NFA
+	 * 
+	 * @param name - name of state to check
+	 */
 	private NFAState stateExist(String name) {
 		for (NFAState s : states) {
 			if (name.equals(s.getName())) {
@@ -66,12 +71,18 @@ public class NFA implements NFAInterface {
 		}
 	}
 
+	/**
+	 * Adds a state to the NFA by reference
+	 * 
+	 * @param name - NFA state to add
+	 */
 	public void addState(NFAState name) {
 		states.add(name);
 	}
 
 	@Override
 	public void addFinalState(String name) {
+		// Check if already exists, if does throw error and exit
 		if (stateExist(name) != null) {
 			System.err.println("A state already exists for " + name);
 			System.exit(2);
@@ -137,68 +148,73 @@ public class NFA implements NFAInterface {
 
 		// instantiate queue for bfs
 		Queue<Set<NFAState>> queue = new LinkedList<Set<NFAState>>();
-
+		// Keep track of states that have already been visited
 		HashSet<NFAState> visited = new HashSet<NFAState>();
-
+		// Add the eClosure of the start state as the starting point for the BFS
 		queue.add(eClosure(startState));
 
 		// iterate through queue
 		while (!queue.isEmpty()) {
 
 			// first item
-				Set<NFAState> current = queue.poll();
+			Set<NFAState> current = queue.poll();
+			// If we don't have a start state add the first item that was in the queue as
+			// the start state
+			if (dfa.getStartState() == null) {
+				dfa.addStartState(current.toString());
+			}
+			// Iterate through every item in the alphabet
+			for (Character a : this.alphabet) {
+				// Keep track of transitions
+				Set<NFAState> transitionSet = new HashSet<NFAState>();
 
-				if (dfa.getStartState() == null) {
-					dfa.addStartState(current.toString());
-				}
-				for (Character a : this.alphabet) {
-
-					Set<NFAState> transitionSet = new HashSet<NFAState>();
-					for (NFAState transition : current) {
-
-						Set<NFAState> dfaTransitions = transition.getTo(a);
-						
-						if (dfaTransitions != null) {
-							for(NFAState dfaTransition: dfaTransitions){
-								
-								if (!visited.contains(dfaTransition)) {
-									transitionSet.addAll(eClosure(dfaTransition));
-								}
-							}
-						}					
-					}
-
-					boolean hasState = false;
-					boolean finalState = false;
-
-					for (DFAState dfaState : dfa.getStates()) {
-							if (transitionSet.toString().equals(dfaState.getName())) {
-								hasState = true;		
-							}
-					}
-
-						if (!hasState) {
-							for (NFAState nfaState : transitionSet) {
-							if (nfaState.isFinal()) {
-								finalState = true;
-								}
-							}
-							if (finalState) {
-								queue.add(transitionSet);
-								dfa.addFinalState(transitionSet.toString());
-							} else {
-								queue.add(transitionSet);
-								dfa.addState(transitionSet.toString());
+				for (NFAState transition : current) {
+					// Get the set of transitions that can be reached on a alphabet symbol in the
+					// language
+					Set<NFAState> dfaTransitions = transition.getTo(a);
+					// If there is a path between the current state and alphabet symbol
+					if (dfaTransitions != null) {
+						for (NFAState dfaTransition : dfaTransitions) {
+							// Make sure we haven't already visited the state
+							if (!visited.contains(dfaTransition)) {
+								transitionSet.addAll(eClosure(dfaTransition));
 							}
 						}
-
-					dfa.addTransition(current.toString(), a, transitionSet.toString());
-					}	
+					}
 				}
-			return dfa;
+				// Keep track of certain parameters
+				boolean hasState = false;
+				boolean finalState = false;
+				// Check if the state is already in the dfa
+				for (DFAState dfaState : dfa.getStates()) {
+					if (transitionSet.toString().equals(dfaState.getName())) {
+						hasState = true;
+					}
+				}
+				// If the state is not in the dfa we need to add it
+				if (!hasState) {
+					for (NFAState nfaState : transitionSet) {
+						// Check if any of the states are final
+						if (nfaState.isFinal()) {
+							finalState = true;
+						}
+					}
+					// If final add as a finalState
+					if (finalState) {
+						queue.add(transitionSet);
+						dfa.addFinalState(transitionSet.toString());
+						// If no states are final then just add as normal state
+					} else {
+						queue.add(transitionSet);
+						dfa.addState(transitionSet.toString());
+					}
+				}
+				// Add the transition from the current state to the state in the transitionSet
+				dfa.addTransition(current.toString(), a, transitionSet.toString());
+			}
+		}
+		return dfa;
 	}
-		
-	
 
 	@Override
 	public Set<NFAState> getToState(NFAState from, char onSymb) {
@@ -220,18 +236,27 @@ public class NFA implements NFAInterface {
 
 	}
 
+	/**
+	 * Performs a depth first search on a specified NFAState
+	 * 
+	 * @param s             - state to start at
+	 * @param visitedStates - Keeps track of what states have been already visited
+	 * @return the set of NFAStates that are reachable by a DFS
+	 */
 	public Set<NFAState> DFS(NFAState s, Set<NFAState> visitedStates) {
 		Set<NFAState> transitions = new LinkedHashSet<NFAState>();
 		transitions.add(s);
-
+		// If there is an empty transition and not visited
 		if (s.getTo('e') != null && !visitedStates.contains(s)) {
 			Set<NFAState> temp = new LinkedHashSet<NFAState>();
 			temp.addAll(s.getTo('e'));
 			visitedStates.add(s);
+			// Go through each state that was reachable by e and recursively call function
 			for (NFAState transition : temp) {
 				transitions.addAll(DFS(transition, visitedStates));
 			}
 		}
+
 		return transitions;
 
 	}
