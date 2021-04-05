@@ -136,75 +136,99 @@ public class NFA implements NFAInterface {
 		DFA dfa = new DFA();
 
 		// instantiate queue for bfs
-		Queue<NFAState> queue = new LinkedList<NFAState>();
+		Queue<Set<NFAState>> queue = new LinkedList<Set<NFAState>>();
 
-		// copy of queue
-		Set<Set<NFAState>> copyQueue = new HashSet<Set<NFAState>>();
-
-		// set of nfa states
-		HashSet<NFAState> NFAstate = new HashSet<NFAState>();
 		HashSet<NFAState> visited = new HashSet<NFAState>();
 
-		// adding inital startstate
-		queue.add(this.startState);
-		dfa.addStartState(this.startState.getName());
-
-		// added the string representation to dfa for output (which is I think how we
-		// need to approach getting the correct output)
+		queue.add(eClosure(startState));
 
 		// iterate through queue
 		while (!queue.isEmpty()) {
 
-			// You should track inside getDFA() method whether a DFA state with the
-			// label(name) corresponding to the string
-			// representation of the NFA states has been created or not.
-			// Q of a DFA can be printed either as {[a] [a, b]}or as{[b, a] [a]}
-
 			// first item
-				NFAState current = queue.poll();
-				visited.add(current);
+				Set<NFAState> current = queue.poll();
+
+				if (dfa.getStartState() == null) {
+					dfa.addStartState(current.toString());
+				}
 				for (Character a : this.alphabet) {
 
 					Set<NFAState> transitionSet = new LinkedHashSet<NFAState>();
-					transitionSet.addAll(this.eClosure(current)); 
-					for (NFAState transition : transitionSet) {
+					for (NFAState transition : current) {
 
 						Set<NFAState> dfaTransitions = transition.getTo(a);
-						if(dfaTransitions != null){
+						
+						if (dfaTransitions != null) {
 							for(NFAState dfaTransition: dfaTransitions){
 								if (!visited.contains(dfaTransition)) {
-									queue.add(dfaTransition);
-									dfa.addState(dfaTransition.getName());
-									
-									
+									transitionSet.addAll(eClosure(dfaTransition));
 								}
-								dfa.addTransition( transition.getName(), a ,dfaTransition.getName());
-								
 							}
-							
+						}					
+					}
+
+					boolean hasState = false;
+					boolean finalState = false;
+
+					for (NFAState nfaState : transitionSet) {
+						for (DFAState dfaState : dfa.getStates()) {
+							if (nfaState.toString().equals(dfaState.getName())) {
+								hasState = true;		
+							}
 						}
+						if (nfaState.isFinal()) {
+							finalState = true;
+						}
+					}
+
+
+
+		
+
+				
+
+
+
+				
+
 					
 
-							
-						}
-						
-						
-		
-						
-						
-						
-						
-	
-					}
-	
+
+					// boolean dfaHasState = false;
+
+					// for (State s : dfa.getStates()) {
+					// 	if (s.getName().equals(transitionSet.toString())) {
+					// 		dfaHasState = true;
+					// 	}
+					// }
+
+					// if (transitionSet.toString() == "[]") {
+					// 	if (!dfaHasState) {
+					// 		dfa.addState("[]");
+					// 		queue.add(transitionSet);
+					// 	}
+					// 	dfa.addTransition(current.toString(), a, "[]");
+					
+					// } else 
+					// if (!dfaHasState) {
+					// 	boolean finalState = false;
+					// 	for (NFAState ns : transitionSet) {
+					// 		if (ns.isFinal()) {
+					// 			finalState = true;
+					// 		}
+					// 	}
+					// 	if (finalState) {
+					// 		queue.add(transitionSet);
+					// 		dfa.addFinalState(transitionSet.toString());
+					// 	} else {
+					// 		queue.add(transitionSet);
+					// 		dfa.addState(transitionSet.toString());
+					// 	}
+					// }
+						dfa.addTransition(current.toString(), a, transitionSet.toString());
+					}	
 				}
-	
-
-			
-			
-		}
 			return dfa;
-
 	}
 		
 	
