@@ -132,13 +132,11 @@ public class NFA implements NFAInterface {
 
 	@Override
 	public State getStartState() {
-		// TODO Auto-generated method stub
 		return (State) startState;
 	}
 
 	@Override
 	public Set<Character> getABC() {
-		// TODO Auto-generated method stub
 		return alphabet;
 	}
 
